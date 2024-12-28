@@ -1,0 +1,28 @@
+name: Pulumi Preview
+on: pull_request
+jobs:
+    preview:
+        name: Preview
+        runs-on: arc-runner-talos
+        steps:
+            - uses: actions/checkout@v2
+            - uses: actions/setup-go@v3
+              with:
+                  go-version: "stable"
+            - run: go mod download
+            - uses: pulumi/actions@v3
+              with:
+                  command: preview
+                  stack-name: org-name/stack-name # When using an individual account, only use stack-name.
+                  comment-on-pr: true
+                  github-token: ${{ secrets.GITHUB_TOKEN }}
+              env:
+                  PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
+                  OCI_TENANCY_OCID: ${{ secrets.OCI_TENANCY_OCID }}
+                  OCI_USER_OCID: ${{ secrets.OCI_USER_OCID }}
+                  OCI_FINGERPRINT: ${{ secrets.OCI_FINGERPRINT }}
+                  OCI_PRIVATE_KEY_PATH: /secrets/oci_private_key.pem
+
+            - name: Create OCI Private Key File
+              run: echo "${{ secrets.OCI_PRIVATE_KEY }}" > /secrets/oci_private_key.pem
+              shell: bash
