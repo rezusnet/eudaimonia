@@ -5,10 +5,11 @@ jobs:
         name: Preview
         runs-on: arc-runner-talos
         steps:
-            - uses: actions/checkout@v2
-            - uses: actions/setup-go@v3
+            - uses: actions/checkout@v6
+            - uses: actions/setup-go@v6
               with:
                   go-version: "stable"
+                  cache: false
             - run: go mod download
             - uses: pulumi/actions@v3
               with:
